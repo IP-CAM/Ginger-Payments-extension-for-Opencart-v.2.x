@@ -3,7 +3,7 @@
     "description": "The official Ginger Payments PHP SDK",
     "keywords": ["payment", "pay", "merchant", "e-commerce"],
     "license": "MIT",
-    "homepage": "https://github.com/gingerpayments/php-sdk",
+    "homepage": "https://github.com/gingerpayments/ginger-php",
     "authors": [
         {
             "name": "Ginger Payments",
@@ -28,6 +28,7 @@
         "squizlabs/php_codesniffer": "~2.2"
     },
     "autoload": {
+        "files": ["src/Fallback.php"],
         "psr-4": {
             "GingerPayments\\Payment\\": "src"
         }
