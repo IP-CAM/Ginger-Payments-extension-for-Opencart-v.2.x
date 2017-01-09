@@ -25,6 +25,20 @@ final class Client
     }
 
     /**
+     * Set httpClient default SSL validation using cURL CA bundle.
+     * http://curl.haxx.se/docs/caextract.html
+     *
+     * @return void
+     */
+    public function useBundledCA()
+    {
+        $this->httpClient->setDefaultOption(
+            'verify',
+            realpath(dirname(__FILE__).'/../assets/cacert.pem')
+        );
+    }
+
+    /**
      * Get possible iDEAL issuers.
      *
      * @return Issuers
@@ -55,6 +69,7 @@ final class Client
      * @param string $returnUrl The return URL.
      * @param string $expirationPeriod The expiration period as an ISO 8601 duration
      * @param array $customer Customer information.
+     * @param array $extra Extra information.
      *
      * @return Order The newly created order.
      */
@@ -66,7 +81,9 @@ final class Client
         $merchantOrderId = null,
         $returnUrl = null,
         $expirationPeriod = null,
-        $customer = null
+        $customer = null,
+        $extra = null,
+        $webhookUrl = null
     ) {
         return $this->postOrder(
             Order::createWithIdeal(
@@ -77,7 +94,9 @@ final class Client
                 $merchantOrderId,
                 $returnUrl,
                 $expirationPeriod,
-                $customer
+                $customer,
+                $extra,
+                $webhookUrl
             )
         );
     }
@@ -93,6 +112,7 @@ final class Client
      * @param string $returnUrl The return URL.
      * @param string $expirationPeriod The expiration period as an ISO 8601 duration
      * @param array $customer Customer information.
+     * @param array $extra Extra information.
      *
      * @return Order The newly created order.
      */
@@ -104,7 +124,9 @@ final class Client
         $merchantOrderId = null,
         $returnUrl = null,
         $expirationPeriod = null,
-        $customer = null
+        $customer = null,
+        $extra = null,
+        $webhookUrl = null
     ) {
         return $this->postOrder(
             Order::createWithSepa(
@@ -115,7 +137,9 @@ final class Client
                 $merchantOrderId,
                 $returnUrl,
                 $expirationPeriod,
-                $customer
+                $customer,
+                $extra,
+                $webhookUrl
             )
         );
     }
@@ -131,6 +155,7 @@ final class Client
      * @param string $returnUrl The return URL.
      * @param string $expirationPeriod The expiration period as an ISO 8601 duration
      * @param array $customer Customer information.
+     * @param array $extra Extra information.
      *
      * @return Order The newly created order.
      */
@@ -142,7 +167,9 @@ final class Client
         $merchantOrderId = null,
         $returnUrl = null,
         $expirationPeriod = null,
-        $customer = null
+        $customer = null,
+        $extra = null,
+        $webhookUrl = null
     ) {
         return $this->postOrder(
             Order::createWithSofort(
@@ -153,7 +180,9 @@ final class Client
                 $merchantOrderId,
                 $returnUrl,
                 $expirationPeriod,
-                $customer
+                $customer,
+                $extra,
+                $webhookUrl
             )
         );
     }
@@ -168,6 +197,7 @@ final class Client
      * @param string $returnUrl The return URL.
      * @param string $expirationPeriod The expiration period as an ISO 8601 duration
      * @param array $customer Customer information.
+     * @param array $extra Extra information.
      *
      * @return Order The newly created order.
      */
@@ -178,7 +208,9 @@ final class Client
         $merchantOrderId = null,
         $returnUrl = null,
         $expirationPeriod = null,
-        $customer = null
+        $customer = null,
+        $extra = null,
+        $webhookUrl = null
     ) {
         return $this->postOrder(
             Order::createWithCreditCard(
@@ -188,7 +220,9 @@ final class Client
                 $merchantOrderId,
                 $returnUrl,
                 $expirationPeriod,
-                $customer
+                $customer,
+                $extra,
+                $webhookUrl
             )
         );
     }
@@ -203,6 +237,7 @@ final class Client
      * @param string $returnUrl The return URL.
      * @param string $expirationPeriod The expiration period as an ISO 8601 duration
      * @param array $customer Customer information.
+     * @param array $extra Extra information.
      *
      * @return Order The newly created order.
      */
@@ -213,7 +248,9 @@ final class Client
         $merchantOrderId = null,
         $returnUrl = null,
         $expirationPeriod = null,
-        $customer = null
+        $customer = null,
+        $extra = null,
+        $webhookUrl = null
     ) {
         return $this->postOrder(
             Order::createWithBancontact(
@@ -223,7 +260,9 @@ final class Client
                 $merchantOrderId,
                 $returnUrl,
                 $expirationPeriod,
-                $customer
+                $customer,
+                $extra,
+                $webhookUrl
             )
         );
     }
@@ -240,6 +279,8 @@ final class Client
      * @param string $returnUrl The return URL.
      * @param string $expirationPeriod The expiration period as an ISO 8601 duration
      * @param array $customer Customer information.
+     * @param array $extra Extra information.
+     * @param string $webhookUrl The webhook URL.
      *
      * @return Order The newly created order.
      */
@@ -252,7 +293,9 @@ final class Client
         $merchantOrderId = null,
         $returnUrl = null,
         $expirationPeriod = null,
-        $customer = null
+        $customer = null,
+        $extra = null,
+        $webhookUrl = null
     ) {
         return $this->postOrder(
             Order::create(
@@ -264,7 +307,9 @@ final class Client
                 $merchantOrderId,
                 $returnUrl,
                 $expirationPeriod,
-                $customer
+                $customer,
+                $extra,
+                $webhookUrl
             )
         );
     }
