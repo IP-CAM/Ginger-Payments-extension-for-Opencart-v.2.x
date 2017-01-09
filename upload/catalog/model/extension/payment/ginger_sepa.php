@@ -1,10 +1,10 @@
 <?php
 
-class ModelPaymentGingerSepa extends Model
+class ModelExtensionPaymentGingerSepa extends Model
 {
     public function getMethod($address, $total)
     {
-        $this->load->language('payment/ginger_sepa');
+        $this->load->language('extension/payment/ginger_sepa');
 
         $query = $this->db->query("SELECT * 
             FROM ".DB_PREFIX."zone_to_geo_zone 
