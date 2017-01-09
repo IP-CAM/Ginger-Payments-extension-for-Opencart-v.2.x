@@ -19,6 +19,8 @@ $_['entry_order_error'] = 'Order Error:';
 $_['entry_sort_order'] = 'Sort Order:';
 $_['entry_ginger_api_key'] = 'Ginger API Key:';
 $_['entry_ginger_total'] = 'Total:';
+$_['entry_cacert'] = 'Bundle cURL ca.cert:';
+$_['entry_send_webhook'] = 'Generate webhook URL:';
 
 /**
  * Text strings
@@ -31,6 +33,9 @@ $_['text_payments'] = 'Payments';
 $_['text_issuer_id'] = 'SWIFT/BIC';
 $_['text_settings_saved'] = 'Ginger Payments: iDEAL settings updated!';
 $_['text_edit_ginger'] = 'Edit Ginger Payments: iDEAL Settings';
+$_['text_extension'] = 'Extensions';
+$_['text_yes'] = 'Yes';
+$_['text_no'] = 'No';
 
 /**
  * Error messages
