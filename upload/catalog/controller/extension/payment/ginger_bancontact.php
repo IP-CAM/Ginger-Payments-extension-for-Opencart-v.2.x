@@ -3,7 +3,7 @@
 /**
  * Class ControllerPaymentGingerBancontact
  */
-class ControllerPaymentGingerBancontact extends Controller
+class ControllerExtensionPaymentGingerBancontact extends Controller
 {
     /**
      * Default currency for Ginger Order
@@ -34,12 +34,7 @@ class ControllerPaymentGingerBancontact extends Controller
         parent::__construct($registry);
 
         $this->gingerHelper = new Gingerpayments(static::MODULE_NAME);
-
-        $this->ginger = $this->gingerHelper->getGingerClient(
-            $this->config->get(
-                $this->gingerHelper->getPaymentSettingsFieldName('api_key')
-            )
-        );
+        $this->ginger = $this->gingerHelper->getGingerClient($this->config);
     }
     
     /**
@@ -48,12 +43,12 @@ class ControllerPaymentGingerBancontact extends Controller
      */
     public function index()
     {
-        $this->language->load('payment/'.static::MODULE_NAME);
+        $this->language->load('extension/payment/'.static::MODULE_NAME);
 
         $data['button_confirm'] = $this->language->get('button_confirm');
-        $data['action'] = $this->url->link('payment/'.static::MODULE_NAME.'/confirm');
+        $data['action'] = $this->url->link('extension/payment/'.static::MODULE_NAME.'/confirm');
 
-        return $this->load->view('payment/'.static::MODULE_NAME, $data);
+        return $this->load->view('extension/payment/'.static::MODULE_NAME, $data);
     }
 
     /**
@@ -66,7 +61,7 @@ class ControllerPaymentGingerBancontact extends Controller
             $orderInfo = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
             if ($orderInfo) {
-                $gingerOrderData = $this->getGingerOrderData($orderInfo);
+                $gingerOrderData = $this->gingerHelper->getOrderData($orderInfo, $this);
                 $gingerOrder = $this->createGingerOrder($gingerOrderData);
                 $checkoutUrl = $gingerOrder->firstTransactionPaymentUrl();
                 
@@ -115,34 +110,9 @@ class ControllerPaymentGingerBancontact extends Controller
             $orderData['merchant_order_id'], // Merchant Order Id
             $orderData['return_url'],        // Return URL
             null,                            // Expiration Period
-            $orderData['customer']           // Customer information
+            $orderData['customer'],          // Customer information
+            null,                            // Extra information
+            $orderData['webhook_url']        // Webhook URL
         );
-    }
-
-    /**
-     * @param array $orderInfo
-     * @return array
-     */
-    protected function getGingerOrderData(array $orderInfo)
-    {
-        return [
-            'amount' => $this->gingerHelper->getAmountInCents($orderInfo['total'], $this->currency),
-            'currency' => $this->gingerHelper->getCurrency(),
-            'merchant_order_id' => $orderInfo['order_id'],
-            'return_url' => $this->url->link('payment/'.static::MODULE_NAME.'/callback'),
-            'description' => $this->gingerHelper->getOrderDescription($orderInfo, $this->language),
-            'customer' => $this->gingerHelper->getCustomerInformation($orderInfo),
-        ];
-    }
-
-    /**
-     * @param array $orderInfo
-     * @return string
-     */
-    protected function getOrderDescription(array $orderInfo)
-    {
-        $this->language->load('payment/'.static::MODULE_NAME);
-
-        return $this->language->get('text_transaction').$orderInfo['order_id'];
     }
 }

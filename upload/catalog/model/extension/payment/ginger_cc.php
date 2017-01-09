@@ -1,10 +1,10 @@
 <?php
 
-class ModelPaymentGingerCc extends Model
+class ModelExtensionPaymentGingerCc extends Model
 {
     public function getMethod($address, $total)
     {
-        $this->load->language('payment/ginger_cc');
+        $this->load->language('extension/payment/ginger_cc');
 
         $query = $this->db->query("SELECT * 
             FROM ".DB_PREFIX."zone_to_geo_zone 
