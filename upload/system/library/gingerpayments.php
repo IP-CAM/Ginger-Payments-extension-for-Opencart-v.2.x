@@ -34,14 +34,22 @@ class Gingerpayments
     }
 
     /**
-     * @param $apiKey
+     * @param object $config
      * @return \GingerPayments\Payment\Client
      */
-    public function getGingerClient($apiKey)
+    public function getGingerClient($config)
     {
         require_once(DIR_SYSTEM.'library/gingerpayments/ginger-php/vendor/autoload.php');
 
-        return \GingerPayments\Payment\Ginger::createClient($apiKey);
+        $ginger = \GingerPayments\Payment\Ginger::createClient(
+            $config->get($this->getPaymentSettingsFieldName('api_key'))
+        );
+
+        if ($config->get($this->getPaymentSettingsFieldName('bundle_cacert'))) {
+            $ginger->useBundledCA();
+        }
+
+        return $ginger;
     }
 
     /**
@@ -99,7 +107,8 @@ class Gingerpayments
                 $orderInfo['payment_address_2'],
                 $orderInfo['payment_firstname']." ".$orderInfo['payment_lastname'],
                 $orderInfo['payment_postcode']." ".$orderInfo['payment_city']
-            )))
+            ))),
+            'locale' => self::formatLocale($orderInfo['language_code'])
         );
 
         return $customer;
@@ -111,19 +120,24 @@ class Gingerpayments
      */
     public function getOrderDescription(array $orderInfo, $language)
     {
-        $language->load('payment/'.$this->paymentMethod);
+        $language->load('extension/payment/'.$this->paymentMethod);
 
         return $language->get('text_transaction').$orderInfo['order_id'];
     }
 
     /**
-     * @param int $total
-     * @param Currency $currency
+     * @param array $orderInfo
+     * @param object $currency
      * @return int
      */
-    public function getAmountInCents($total, $currency)
+    public function getAmountInCents($orderInfo, $currency)
     {
-        $amount = $currency->format($total, $this->getCurrency(), false, false);
+        $amount = $currency->format(
+            $orderInfo['total'],
+            $orderInfo['currency_code'],
+            $orderInfo['currency_value'],
+            false
+        );
 
         return (int) (100 * round($amount, 2, PHP_ROUND_HALF_UP));
     }
@@ -143,5 +157,40 @@ class Gingerpayments
     public function getCurrency()
     {
         return static::DEFAULT_CURRENCY;
+    }
+
+    /**
+     * @param string $locale
+     * @return mixed
+     */
+    public function formatLocale($locale)
+    {
+        return strstr($locale, '-', true);
+    }
+
+    /**
+     * @param array $orderInfo
+     * @param object $paymentMethod
+     * @return array
+     */
+    public function getOrderData(array $orderInfo, $paymentMethod)
+    {
+        $webhookUrl = $paymentMethod->config->get($this->getPaymentSettingsFieldName('send_webhook'))
+            ? $paymentMethod->url->link('extension/payment/'.$this->paymentMethod.'/callback') : null;
+
+        $issuerId = array_key_exists('issuer_id', $paymentMethod->request->post)
+            ? $paymentMethod->request->post['issuer_id'] : null;
+
+        return [
+            'amount' => $this->getAmountInCents($orderInfo, $paymentMethod->currency),
+            'currency' => $this->getCurrency(),
+            'merchant_order_id' => $orderInfo['order_id'],
+            'return_url' => $paymentMethod->url->link('extension/payment/'.$this->paymentMethod.'/callback'),
+            'description' => $this->getOrderDescription($orderInfo, $paymentMethod->language),
+            'customer' => $this->getCustomerInformation($orderInfo),
+            'issuer_id' => $issuerId,
+            'webhook_url' => $webhookUrl,
+            'payment_info' => []
+        ];
     }
 }
