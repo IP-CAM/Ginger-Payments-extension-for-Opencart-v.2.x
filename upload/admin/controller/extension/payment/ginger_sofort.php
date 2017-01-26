@@ -1,12 +1,12 @@
 <?php
 
-class ControllerPaymentGingerSofort extends Controller {
+class ControllerExtensionPaymentGingerSofort extends Controller {
 
     const GINGER_MODULE = 'ginger_sofort';
 
     public function index()
     {
-        $this->load->controller('payment/ginger_ideal', static::getGingerModuleName());
+        $this->load->controller('extension/payment/ginger_ideal', static::getGingerModuleName());
     }
 
     static function getGingerModuleName()

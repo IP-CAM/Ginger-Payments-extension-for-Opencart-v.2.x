@@ -3,7 +3,7 @@
 /**
  * Class ControllerPaymentGingerIdeal
  */
-class ControllerPaymentGingerIdeal extends Controller
+class ControllerExtensionPaymentGingerIdeal extends Controller
 {
     /**
      * Prefix for fields in admin settings page
@@ -23,7 +23,9 @@ class ControllerPaymentGingerIdeal extends Controller
         'order_status_id_expired',
         'order_status_id_cancelled',
         'order_status_id_error',
-        'total'
+        'total',
+        'bundle_cacert',
+        'send_webhook'
     ];
 
     /**
@@ -43,7 +45,7 @@ class ControllerPaymentGingerIdeal extends Controller
     {
         $this->setGingerModuleName($gingerModuleName);
 
-        $this->language->load('payment/'.$gingerModuleName);
+        $this->language->load('extension/payment/'.$gingerModuleName);
         $this->load->model('setting/setting');
         $this->load->model('localisation/order_status');
 
@@ -63,7 +65,7 @@ class ControllerPaymentGingerIdeal extends Controller
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('payment/ginger', $data));
+        $this->response->setOutput($this->load->view('extension/payment/ginger', $data));
     }
 
     /**
@@ -88,7 +90,7 @@ class ControllerPaymentGingerIdeal extends Controller
         $this->session->data['success'] = $this->language->get('text_settings_saved');
 
         $this->response->redirect(
-            $this->url->link('extension/payment', 'token='.$this->session->data['token'], true)
+            $this->url->link('extension/extension', 'token='.$this->session->data['token'] . '&type=payment', true)
         );
     }
 
@@ -116,16 +118,18 @@ class ControllerPaymentGingerIdeal extends Controller
             'text_disabled' => $this->language->get('text_disabled'),
             'button_save' => $this->language->get('text_button_save'),
             'button_cancel' => $this->language->get('text_button_cancel'),
+            'text_yes' => $this->language->get('text_yes'),
+            'text_no' => $this->language->get('text_no'),
+            'entry_cacert' =>  $this->language->get('entry_cacert'),
+            'entry_send_webhook' =>  $this->language->get('entry_send_webhook'),
             'action' => $this->url->link(
-                'payment/'.$this->getGingerModuleName(),
-                'token='.$this->session->data['token'],
+                'extension/payment/'.$this->getGingerModuleName(), 'token='.$this->session->data['token'],
                 true
             ),
             'cancel' => $this->url->link(
-                'extension/payment',
-                'token='.$this->session->data['token'],
+                'extension/extension', 'token='.$this->session->data['token'] . '&type=payment',
                 true
-            )
+            ),
         ];
     }
 
@@ -172,12 +176,12 @@ class ControllerPaymentGingerIdeal extends Controller
                 'href' => $this->url->link('common/dashboard', 'token='.$this->session->data['token'], true)
             ],
             [
-                'text' => $this->language->get('text_payments'),
-                'href' => $this->url->link('extension/payment', 'token='.$this->session->data['token'], true)
+                'text' => $this->language->get('text_extension'),
+                'href' => $this->url->link('extension/extension', 'token='.$this->session->data['token'].'&type=payment', true)
             ],
             [
                 'text' => $this->language->get('heading_title'),
-                'href' => $this->url->link('payment/'.$this->getGingerModuleName(),
+                'href' => $this->url->link('extension/payment/'.$this->getGingerModuleName(),
                     'token='.$this->session->data['token'], true)
             ]
         ];
