@@ -204,7 +204,7 @@ class Gingerpayments
     public function processWebhook($paymentMethod, array $webhookData)
     {
         if ($webhookData['event'] == 'status_changed') {
-            $gingerOrder = $paymentMethod->ing->getOrder($webhookData['order_id']);
+            $gingerOrder = $paymentMethod->ginger->getOrder($webhookData['order_id']);
             $orderInfo = $paymentMethod->model_checkout_order->getOrder($gingerOrder->getMerchantOrderId());
             if ($orderInfo) {
                 $paymentMethod->model_checkout_order->addOrderHistory(
