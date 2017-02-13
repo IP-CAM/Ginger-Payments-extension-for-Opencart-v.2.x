@@ -26,12 +26,12 @@ class ControllerExtensionPaymentGingerSepa extends Controller
     /**
      * @var \GingerPayments\Payment\Client
      */
-    protected $ginger;
+    public $ginger;
 
     /**
      * @var Gingerpayments
      */
-    protected $gingerHelper;
+    public $gingerHelper;
 
     /**
      * ControllerPaymentGinger constructor.
@@ -125,5 +125,17 @@ class ControllerExtensionPaymentGingerSepa extends Controller
         $gingerOrder = $gingerOrder->toArray();
 
         return $gingerOrder['transactions'][0]['payment_method_details']['reference'];
+    }
+
+    /**
+     * Webhook action is called by API when transaction status is updated
+     *
+     * @return void
+     */
+    public function webhook()
+    {
+        $this->load->model('checkout/order');
+        $webhookData = json_decode(file_get_contents('php://input'), true);
+        $this->gingerHelper->processWebhook($this, $webhookData);
     }
 }
