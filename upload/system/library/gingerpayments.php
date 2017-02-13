@@ -176,7 +176,7 @@ class Gingerpayments
     public function getOrderData(array $orderInfo, $paymentMethod)
     {
         $webhookUrl = $paymentMethod->config->get($this->getPaymentSettingsFieldName('send_webhook'))
-            ? $paymentMethod->url->link('extension/payment/'.$this->paymentMethod.'/callback') : null;
+            ? $paymentMethod->url->link('extension/payment/'.$this->paymentMethod.'/webhook') : null;
 
         $issuerId = array_key_exists('issuer_id', $paymentMethod->request->post)
             ? $paymentMethod->request->post['issuer_id'] : null;
@@ -192,5 +192,28 @@ class Gingerpayments
             'webhook_url' => $webhookUrl,
             'payment_info' => []
         ];
+    }
+
+     /**
+     * Method processes calls to webhook url
+     *
+     * @param object $paymentMethod
+     * @param array $webhookData
+     * @return void
+     */
+    public function processWebhook($paymentMethod, array $webhookData)
+    {
+        if ($webhookData['event'] == 'status_changed') {
+            $gingerOrder = $paymentMethod->ing->getOrder($webhookData['order_id']);
+            $orderInfo = $paymentMethod->model_checkout_order->getOrder($gingerOrder->getMerchantOrderId());
+            if ($orderInfo) {
+                $paymentMethod->model_checkout_order->addOrderHistory(
+                    $gingerOrder->getMerchantOrderId(),
+                    $paymentMethod->gingerHelper->getOrderStatus($gingerOrder->getStatus(), $paymentMethod->config),
+                    'Status changed for order: '.$gingerOrder->id()->toString(),
+                    true
+                );
+            }
+        }
     }
 }
