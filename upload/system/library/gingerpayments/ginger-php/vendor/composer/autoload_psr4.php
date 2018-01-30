@@ -14,9 +14,7 @@ return array(
     'GuzzleHttp\\Stream\\' => array($vendorDir . '/guzzlehttp/streams/src'),
     'GuzzleHttp\\Ring\\' => array($vendorDir . '/guzzlehttp/ringphp/src'),
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
-    'GingerPayments\\Payment\\Tests\\' => array($baseDir . '/tests'),
     'GingerPayments\\Payment\\' => array($baseDir . '/src'),
-    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'Carbon\\' => array($vendorDir . '/nesbot/carbon/src/Carbon'),
     'Alcohol\\' => array($vendorDir . '/alcohol/iso3166'),
 );
